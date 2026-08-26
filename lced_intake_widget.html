@@ -337,15 +337,18 @@
       <div class="step-num">3</div><br>Treatment
     </div>
     <div class="step-pill" onclick="goToStep(4)">
-      <div class="step-num">4</div><br>ED Screen
+      <div class="step-num">4</div><br>Support
     </div>
     <div class="step-pill" onclick="goToStep(5)">
-      <div class="step-num">5</div><br>Referral
+      <div class="step-num">5</div><br>ED Screen
     </div>
     <div class="step-pill" onclick="goToStep(6)">
-      <div class="step-num">6</div><br>Guardian
+      <div class="step-num">6</div><br>Referral
     </div>
-    <div class="step-pill" id="step-pill-7" onclick="autoSave(); goToStep(7)">
+    <div class="step-pill" onclick="goToStep(7)">
+      <div class="step-num">7</div><br>Guardian
+    </div>
+    <div class="step-pill" id="step-pill-8" onclick="autoSave(); goToStep(8)">
       <div class="step-num">✓</div><br>Review
     </div>
   </div>
@@ -469,8 +472,33 @@
     </div>
   </div>
 
-  <!-- SECTION 4: ED Questionnaire -->
+  <!-- SECTION 4: Support -->
   <div class="section" id="section-4">
+    <div class="section-title">Support</div>
+    <div class="section-divider"></div>
+
+    <div class="script-box">
+      <div class="script-label">📞 Read to Patient</div>
+      <div class="script-text">"Historically, having a support person while in our program leads to higher success rates. Who do you plan to involve in your treatment? How would you like to involve them, and can I get their contact information to add to your chart?"</div>
+    </div>
+
+    <div class="note-box">
+      <div class="note-label">⚠️ Staff Note</div>
+      <div class="note-text">If patient is open to it, explain that a support person joining family therapy sessions or attending intake significantly improves outcomes.</div>
+    </div>
+
+    <div class="field-group">
+      <label>Support Person Name</label>
+      <input type="text" id="support_person_name" placeholder="Full name">
+    </div>
+    <div class="field-group">
+      <label>Support Person Notes</label>
+      <textarea id="support_person_notes" placeholder="Name, relationship, phone, email, how they plan to be involved..."></textarea>
+    </div>
+  </div>
+
+  <!-- SECTION 5: ED Questionnaire -->
+  <div class="section" id="section-5">
     <div class="section-title">ED Questionnaire</div>
     <div class="section-divider"></div>
 
@@ -512,8 +540,8 @@
     </div>
   </div>
 
-  <!-- SECTION 5: Patient Referral -->
-  <div class="section" id="section-5">
+  <!-- SECTION 6: Patient Referral -->
+  <div class="section" id="section-6">
     <div class="section-title">Patient Referral</div>
     <div class="section-divider"></div>
 
@@ -537,8 +565,8 @@
     </div>
   </div>
 
-  <!-- SECTION 6: Guardian Information -->
-  <div class="section" id="section-6">
+  <!-- SECTION 7: Guardian Information -->
+  <div class="section" id="section-7">
     <div class="section-title">Guardian Information</div>
     <div class="section-divider"></div>
 
@@ -592,8 +620,8 @@
     </div>
   </div>
 
-  <!-- SECTION 7: Review & Save -->
-  <div class="section" id="section-7">
+  <!-- SECTION 8: Review & Save -->
+  <div class="section" id="section-8">
     <div class="section-title">Review & Save</div>
     <div class="section-divider"></div>
     <div id="summary-content"></div>
@@ -604,7 +632,7 @@
 <!-- Footer Nav -->
 <div class="footer">
   <button class="btn btn-back" id="btn-back" onclick="prevStep()" style="display:none">← Back</button>
-  <span class="step-counter" id="step-counter">Step 1 of 7</span>
+  <span class="step-counter" id="step-counter">Step 1 of 8</span>
   <span id="link-save-close" onclick="autoSave().then(() => ZOHO.CRM.UI.Popup.closeReload())" class="save-close-link">Save & Close</span>
   <button class="btn btn-next" id="btn-next" onclick="nextStep()">Next →</button>
   <button class="btn btn-save" id="btn-save" onclick="saveRecord()" style="display:none">💾 Save to CRM</button>
@@ -615,7 +643,7 @@
 
 <script>
   let currentStep = 1;
-  const totalSteps = 7;
+  const totalSteps = 8;
 
   // ── Age calc ──
   function calcAge() {
@@ -628,7 +656,7 @@
     if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
     document.getElementById('age').value = age + ' years';
     // Show/hide guardian tab based on age
-    const guardianPill = document.querySelectorAll('.step-pill')[5];
+    const guardianPill = document.querySelectorAll('.step-pill')[6];
     if (age < 18) {
       guardianPill.style.display = '';
       guardianPill.dataset.skip = 'false';
@@ -689,20 +717,20 @@
   function nextStep() {
     if (!validateStep()) return;
     autoSave();
-    // Skip guardian step (step 6) if patient is 18+
-    const guardianPill = document.querySelectorAll('.step-pill')[5];
-    if (currentStep === 5 && guardianPill.dataset.skip === 'true') {
-      goToStep(7);
+    // Skip guardian step (step 7) if patient is 18+
+    const guardianPill = document.querySelectorAll('.step-pill')[6];
+    if (currentStep === 6 && guardianPill.dataset.skip === 'true') {
+      goToStep(8);
     } else {
       goToStep(currentStep + 1);
     }
   }
 
   function prevStep() {
-    // Skip guardian step (step 6) if patient is 18+
-    const guardianPill = document.querySelectorAll('.step-pill')[5];
-    if (currentStep === 7 && guardianPill.dataset.skip === 'true') {
-      goToStep(5);
+    // Skip guardian step (step 7) if patient is 18+
+    const guardianPill = document.querySelectorAll('.step-pill')[6];
+    if (currentStep === 8 && guardianPill.dataset.skip === 'true') {
+      goToStep(6);
     } else {
       goToStep(currentStep - 1);
     }
@@ -746,6 +774,10 @@
         ['MH Diagnosis', val('mh_diagnosis')],
         ['Suicidal Thoughts?', getRadio('si_thoughts')],
         ['Suicidal Intentions?', getRadio('si_intent')]
+      ]},
+      { group: 'Support', fields: [
+        ['Support Person Name', val('support_person_name')],
+        ['Support Person Notes', val('support_person_notes')]
       ]},
       { group: 'ED Questionnaire', fields: [
         ['Symptom Summary', val('symptom_summary')],
@@ -793,6 +825,8 @@
       Mental_health_diagnosis: val('mh_diagnosis'),
       Suicidal_Thoughts: getRadio('si_thoughts'),
       Suicidal_Intentions: getRadio('si_intent'),
+      Support_Person_Name: val('support_person_name'),
+      Support_Person_Notes: val('support_person_notes'),
       Brief_summary_of_your_symptoms_how_often: val('symptom_summary'),
       Previous_Diagnosis_of_ED: getRadio('prev_ed_dx'),
       Height_in_inches: val('height_in') ? parseFloat(val('height_in')) : null,
@@ -899,17 +933,21 @@
       if (r.Suicidal_Thoughts) setRadio('si_thoughts', r.Suicidal_Thoughts);
       if (r.Suicidal_Intentions) setRadio('si_intent', r.Suicidal_Intentions);
 
-      // Section 4 - ED Questionnaire
+      // Section 4 - Support
+      if (r.Support_Person_Name) document.getElementById('support_person_name').value = r.Support_Person_Name;
+      if (r.Support_Person_Notes) document.getElementById('support_person_notes').value = r.Support_Person_Notes;
+
+      // Section 5 - ED Questionnaire
       if (r.Brief_summary_of_your_symptoms_how_often) document.getElementById('symptom_summary').value = r.Brief_summary_of_your_symptoms_how_often;
       if (r.Previous_Diagnosis_of_ED) setRadio('prev_ed_dx', r.Previous_Diagnosis_of_ED);
       if (r.Height_in_inches) { document.getElementById('height_in').value = r.Height_in_inches; }
       if (r.Patient_Weight) { document.getElementById('weight_lbs').value = r.Patient_Weight; calcBMI(); }
 
-      // Section 5 - Referral
+      // Section 6 - Referral
       if (r.How_Did_You_Hear_About_Us) document.getElementById('referrer_type').value = r.How_Did_You_Hear_About_Us;
       if (r.Who_Referred_You) document.getElementById('referral_name').value = r.Who_Referred_You;
 
-      // Section 6 - Guardian
+      // Section 7 - Guardian
       if (r.Guardian_1_Name) document.getElementById('guardian1_name').value = r.Guardian_1_Name;
       if (r.Guardian_1_Phone) document.getElementById('guardian1_phone').value = r.Guardian_1_Phone;
       if (r.Guardian_1_Email) document.getElementById('guardian1_email').value = r.Guardian_1_Email;
